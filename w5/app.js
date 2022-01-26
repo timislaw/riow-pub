@@ -43,64 +43,63 @@ const daily = [
 ];
 
 const formatOutput = function (text, heading) {
-    showOnPage(`<b>${heading}</b>`);
-    showOnPage(text);
-    showOnPage(`___________________`)
-}
+  showOnPage(`<b>${heading}</b>`);
+  showOnPage(text);
+  showOnPage(`___________________`);
+};
 
-  const showOnPage=function (text) {
-    let newParagraph = document.createElement('p');
-    newParagraph.innerHTML = text;
-    let outputDiv = document.getElementById('output');
-    outputDiv.append(newParagraph);
+const showOnPage = function (text) {
+  let newParagraph = document.createElement('p');
+  newParagraph.innerHTML = text;
+  let outputDiv = document.getElementById('output');
+  outputDiv.append(newParagraph);
+};
+
+const determineList = function (availableTime, unplannedEvent) {
+  let message = '';
+  let list = 'Make and Drink Coffee, ';
+  if (unplannedEvent) {
+    list = list + 'Check Time';
+    message = 'Unplanned event happen, just get back on track tomorrow';
+  } else if (availableTime >= 1.5) {
+    list = list + 'Mediate, Get Morning Sun, Make Green Drink';
+    message = 'Love getting up early!';
+  } else if (availableTime >= 0.7 && availableTime <= 1.4) {
+    list = list + 'Mediate, Get Morning Sun';
+    message = 'That green drink will taste so good after the workout!';
+  } else {
+    list = list + 'Mediate, ';
+    message = 'Mediation is important!';
   }
+  return `${list} <br> ${message}`;
+};
 
-  const determineList = function (availableTime, unplannedEvent) {
-    let message = '';
-    let list = 'Make and Drink Coffee, ';
-    if (unplannedEvent) {
-      list = list + 'Check Time';
-      message = 'Unplanned event happen, just get back on track tomorrow';
-    } else if (availableTime >= 1.5) {
-      list = list + 'Mediate, Get Morning Sun, Make Green Drink';
-      message = 'Love getting up early!';
-    } else if (availableTime >= 0.7 && availableTime <= 1.4) {
-      list = list + 'Mediate, Get Morning Sun';
-      message = 'That green drink will taste so good after the workout!';
-    } else {
-      list = list + 'Mediate, ';
-      message = 'Mediation is important!';
-    }
-   return `${list} <br> ${message}`
+const processDaily = function (obj) {
+  let timeBeforeGym = obj.gymClassStartTime - obj.currentTime;
+  if (obj.myTurnToDrive) {
+    availableTime = timeBeforeGym - 0.25;
+  } else {
+    availableTime = timeBeforeGym - 0.15;
   }
-
-  const processDaily = function (obj) {
-    let timeBeforeGym = obj.gymClassStartTime - obj.currentTime;
-    if (obj.myTurnToDrive) {
-      availableTime = timeBeforeGym - 0.25;
-    } else {
-      availableTime = timeBeforeGym - 0.15;
-    }
-    variableData = `Day ---> ${obj.day} <br>
+  variableData = `Day ---> ${obj.day} <br>
                     Current Time ---> ${obj.currentTime} <br>
                     Gym time  ---> ${obj.gymClassStartTime} <br>
                     Time Before Gym ---> ${timeBeforeGym} <br>
                     My Turn to Drive ---> ${obj.myTurnToDrive} <br>
                     Did unplanned event happen --->${obj.unplannedEvent}<br>`;
 
-    formatOutput(
-      variableData,
-      `<b>This output is based on the following variable data:</b><br>`
-    );
-    decision = determineList(availableTime, obj.unplannedEvent);
-    formatOutput(`${decision}`, 'Things to do before going to GYM');
-    }
-  
+  formatOutput(
+    variableData,
+    `<b>This output is based on the following variable data:</b><br>`
+  );
+  decision = determineList(availableTime, obj.unplannedEvent);
+  formatOutput(`${decision}`, 'Things to do before going to GYM');
+};
 
-  const loopOverDaily = function() {
-    daily.forEach(function(obj){
-      processDaily(obj)
-    })
-  }
+const loopOverDaily = function () {
+  daily.forEach(function (obj) {
+    processDaily(obj);
+  });
+};
 
-loopOverDaily()
+loopOverDaily();
